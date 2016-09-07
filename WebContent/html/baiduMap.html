@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>百度地圖</title>
+		<script src="http://apps.bdimg.com/libs/angular.js/1.4.6/angular.min.js"></script>
+		<script src="http://api.map.baidu.com/api?v=1.4"></script>
+	</head>
+	<body>
+		<div ng-app="myApp" ng-controller="myCtrl">
+			<div baidumap="myMap" style="height: 630px">
+				
+			</div>
+		</div>
+<!-- 		<div id="container" style="height: 500px"> -->
+		
+<!-- 		</div> -->
+	</body>
+	<script>
+// 		var map = new BMap.Map("container");
+// 		console.log(map);
+// 		var point = new BMap.Point(116.404,39.915);
+// 		map.centerAndZoom(point,15);
+// 		console.log(333);
+	
+		var app = angular.module("myApp",[]);
+		app.directive("baidumap",function(){
+			return {
+				restrict : 'A',
+				scope : true,
+				link : function(scope,element,attr){
+					scope.$watch(function(){
+						return scope[attr.baidumap];
+					},function(newValue,oldValue,scope){
+						var map =new BMap.Map(element[0]);
+						var point = new BMap.Point(120.404, 40.915);
+// 						var point = new BMap.Point(scope[attr.baidumap][0],scope[attr.baidumap][1]);
+						map.centerAndZoom(point,5);
+						map.addControl(new BMap.NavigationControl());    
+						map.addControl(new BMap.OverviewMapControl());  
+						map.addControl(new BMap.ScaleControl());
+						map.addControl(new BMap.MapTypeControl());
+						map.enableScrollWheelZoom();
+						var data = scope[attr.baidumap];
+						console.log(data);
+						for(var i=0;i<data.length;i++){
+							var marker = new BMap.Marker(new BMap.Point(data[i][0],data[i][1]));
+							map.addOverlay(marker);
+							marker.addEventListener("click", function(e){
+								var opt = {
+									width : 250,
+									height: 40,
+									title:'info',
+									enableMessage:true,
+									message:"lng:"+e.point.lng+","+"lat:"+e.point.lat
+								}
+								var infoWindow = new BMap.InfoWindow(opt.message,opt);
+								map.openInfoWindow(infoWindow,e.point);
+							})
+						}
+					});
+				}
+			};
+		});
+		app.controller("myCtrl",['$scope','baidumapServe',function($scope,baidumapServe){
+			
+		
+// 			$scope.myMap = [[114.404,39.915],[120.404, 40.915],[121.4648,31.2891],
+// 			                [113.8953,22.901],[118.7073,37.5513],[113.4229,22.478],
+// 			                [111.4783,36.1615],[118.3118,35.2936],[124.541,40.4242]];
+			
+// 			$scope.myMap = [
+// 					[121.4648,31.2891],
+// 				   	[113.8953,22.901],
+// 				    [118.7073,37.5513],
+// 				    [113.4229,22.478],
+// 				    [111.4783,36.1615],
+// 				    [118.3118,35.2936],
+// 				    [124.541,40.4242],
+// 				    [119.5642,28.1854],
+// 				    [87.9236,43.5883],
+// 				    [112.8955,23.1097],
+// 				    [115.0488,39.0948],
+// 				    [103.5901,36.3043],
+// 				    [110.3467,41.4899],
+// 				    [116.4551,40.2539],
+// 				    [109.314,21.6211],
+// 				    [118.8062,31.9208],
+// 				    [108.479,23.1152],
+// 				    [116.0046,28.6633],
+// 				    [121.1023,32.1625],
+// 				    [118.1689,24.6478],
+// 				    [121.1353,28.6688],
+// 				    [117.29,32.0581],
+// 				    [111.4124,40.4901],
+// 				    [108.4131,34.8706]
+// 			]
+// 			baidumapServe.getMapData($scope.myMap);
+// 			console.log($scope.myMap);
+			$scope.myMap = baidumapServe.getMapData();
+		}]);
+		app.service("dataServer",function($http,$q){
+			this.httpGet = function(url,params){
+				var deferred = $q.defer();
+				$http.get(url,{
+					params:params
+				}).success(function(data,status,headers,config){
+					deferred.resolve(data);
+				}).error(function(){
+					deferred.reject(data);
+				});
+				return deffered.promise;
+			}
+		});
+		app.service("baidumapServe",function(){
+// 			this getMapData = function(baidumap){
+// 				var url;
+// 				var params;
+// 				var promise = dataServer.httpGet(url,params);
+// 				promise.then(function(data){
+// 					baidumap = data.rows;
+// 				},function(data){
+					
+// 				});
+// 			}
+
+			this.getMapData = function(){
+				return [
+							[121.4648,31.2891],
+						   	[113.8953,22.901],
+						    [118.7073,37.5513],
+						    [113.4229,22.478],
+						    [111.4783,36.1615],
+						    [118.3118,35.2936],
+						    [124.541,40.4242],
+						    [119.5642,28.1854],
+						    [87.9236,43.5883],
+						    [112.8955,23.1097],
+						    [115.0488,39.0948],
+						    [103.5901,36.3043],
+						    [110.3467,41.4899],
+						    [116.4551,40.2539],
+						    [109.314,21.6211],
+						    [118.8062,31.9208],
+						    [108.479,23.1152],
+						    [116.0046,28.6633],
+						    [121.1023,32.1625],
+						    [118.1689,24.6478],
+						    [121.1353,28.6688],
+						    [117.29,32.0581],
+						    [111.4124,40.4901],
+						    [108.4131,34.8706]
+					]
+			}
+			
+		})
+	</script>
+</html>

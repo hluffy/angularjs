@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>markers</title>
+		<script src="http://apps.bdimg.com/libs/angular.js/1.4.6/angular.min.js"></script>
+<!-- 		<script src="http://api.map.baidu.com/api?v=2.0&ak=mFDDCrK5YUQzYCljO3UyA37ZOiy0sBXf"></script> -->
+		<script src="http://api.map.baidu.com/api?v=1.4"></script>
+<!-- 		<script type="text/javascript" src="http://developer.baidu.com/map/jsdemo/data/points-sample-data.js"></script> -->
+	</head>
+	<body>
+		<div ng-app="myApp" ng-controller="myCtrl">
+			<div style="height: 620px" baidumarkers="myMarkers">
+				
+			</div>
+		</div>
+	</body>
+	<script>
+		var app = angular.module("myApp",[]);
+		app.directive("baidumarkers",function(){
+			return {
+				restrict : "A",
+				scope : true,
+				link : function(scope,element,attr){
+					scope.$watch(function(){
+						return scope[attr.baidumarkers];
+					},function(newValue,oldValue,scope){
+						var map = new BMap.Map(element[0]);
+						var point = new BMap.Point(120.404, 40.915);
+						map.centerAndZoom(point,5);
+						map.addControl(new BMap.NavigationControl());    
+						map.addControl(new BMap.OverviewMapControl());  
+						map.addControl(new BMap.ScaleControl());
+						map.addControl(new BMap.MapTypeControl());
+						map.enableScrollWheelZoom();
+						var data = scope[attr.baidumarkers];
+						if(document.createElement("canvas").getContext){
+							var points = [];
+							for(var i=0;i<data.length;i++){
+								points.push(new BMap.Point(data[i][0],data[i][1]));
+							}
+							var options = {
+						            "size": map.BMAP_POINT_SIZE_SMALL,
+						            "shape": map.BMAP_POINT_SHAPE_STAR,
+						            "color": '#d340c3'
+							}
+							var pointCollection = new BMap.PointCollection(points, options);
+							map.addOverlay(pointCollection);
+						}else{
+							alert('请在chrome、safari、IE8+以上浏览器查看');
+						}
+					});
+				}
+			};
+		});
+		app.controller("myCtrl",function($scope){
+			$scope.myMarkers = [
+								[121.4648,31.2891],
+							   	[113.8953,22.901],
+							    [118.7073,37.5513],
+							    [113.4229,22.478],
+							    [111.4783,36.1615],
+							    [118.3118,35.2936],
+							    [124.541,40.4242],
+							    [119.5642,28.1854],
+							    [87.9236,43.5883],
+							    [112.8955,23.1097],
+							    [115.0488,39.0948],
+							    [103.5901,36.3043],
+							    [110.3467,41.4899],
+							    [116.4551,40.2539],
+							    [109.314,21.6211],
+							    [118.8062,31.9208],
+							    [108.479,23.1152],
+							    [116.0046,28.6633],
+							    [121.1023,32.1625],
+							    [118.1689,24.6478],
+							    [121.1353,28.6688],
+							    [117.29,32.0581],
+							    [111.4124,40.4901],
+							    [108.4131,34.8706]
+						]
+		});
+	</script>
+</html>
