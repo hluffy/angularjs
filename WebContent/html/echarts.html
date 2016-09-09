@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html ng-app="myApp">
 	<head>
 		<meta charset="UTF-8">
 		<title>echarts</title>
@@ -8,7 +8,7 @@
 		<script src="../WEB-INF/lib/china.js"></script>
 	</head>
 	<body>
-		<div ng-app="myApp" ng-controller="myCtrl">
+		<div ng-controller="myCtrl">
 			<div echart="echartOpt" style="height: 640px">
 				
 			</div>
@@ -24,8 +24,6 @@
 					scope.$watch(function(){
 						return scope[attr.echart];
 					},function(newValue,oldValue,scope){
-						console.log(element[0]);
-						console.log(attr.echart);
 						var myChart = echarts.init(element[0]);
 						myChart.setOption(scope[attr.echart]);
 					});
